@@ -1,7 +1,12 @@
 import pandas as pd
 import requests
+from pathlib import Path
 
-plik_statement = pd.read_csv("20260203-account-statement.csv")
+BASE_DIR = Path(__file__).resolve().parent      # projekt/src
+ROOT_DIR = BASE_DIR.parent                     # projekt
+STATEMENT_PATH = ROOT_DIR / "data" / "20260203-account-statement.csv"
+
+plik_statement = pd.read_csv(STATEMENT_PATH)
 plik_statement['Data'] = pd.to_datetime(plik_statement['Data'])
 plik_statement['Data'] = plik_statement['Data'].dt.normalize()
 wynik = plik_statement[plik_statement["Rodzaj płatności"].isin(["Przychody z tytułu odsetek za zwłokę przy uzgodnieniu środków w drodze", "Odsetki otrzymane z tytułu odkupu pożyczki", "Otrzymane odsetki", "Odsetki otrzymane od oczekujących płatności", "Otrzymane opłaty za opóźnienia"])]
@@ -10,7 +15,7 @@ oplaty = plik_statement[plik_statement["Rodzaj płatności"].isin(["Mintos Core 
 
 
 
-df_kurs_EUR_2025 = wynik[wynik['Data'].dt.year == 2025]
+df_kurs_EUR_2025 = wynik[wynik['Data'].dt.year == 2025].copy()
 df_kurs_EUR_2025['data_kursu'] = df_kurs_EUR_2025['Data'] - pd.Timedelta(days=1)
 
 #ZAKRES
